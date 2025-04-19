@@ -10,14 +10,21 @@ import {
   FlatList,
   ImageBackground,
 } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';
+import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons'; // Import icons
 import { useRouter } from 'expo-router';
 
 const userName = 'Alex';
 
 const featuredBarberImage = require('../assets/barbernialana.png');
 
-const services = ['Haircut', 'Trim', 'Shaving', 'Styling', 'Coloring'];
+const services = [
+  { name: 'Haircut', icon: 'scissors-cutting' },
+  { name: 'Trim', icon: 'content-cut' },
+  { name: 'Shaving', icon: 'razor-double-edge' },
+  { name: 'Styling', icon: 'hair-dryer' },
+  { name: 'Coloring', icon: 'palette' },
+  { name: 'Massage', icon: 'hand-heart' }, // New service added
+];
 
 const trendingHaircuts = [
   { name: 'Buzzcut', image: require('../assets/buzzcut.png') },
@@ -113,7 +120,8 @@ export default function Home() {
       <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.servicesRow}>
         {services.map((service, index) => (
           <View key={index} style={styles.serviceBox}>
-            <Text style={styles.serviceText}>{service}</Text>
+            <MaterialCommunityIcons name={service.icon} size={40} color="#FFD700" style={styles.serviceIcon} />
+            <Text style={styles.serviceText}>{service.name}</Text>
           </View>
         ))}
       </ScrollView>
@@ -241,16 +249,17 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   serviceBox: {
-    backgroundColor: '#1e1f26',
-    borderRadius: 16,
-    paddingHorizontal: 20,
-    paddingVertical: 12,
-    marginRight: 12,
+    alignItems: 'center',
+    marginRight: 16,
+  },
+  serviceIcon: {
+    marginBottom: 8,
   },
   serviceText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: '500',
+    textAlign: 'center',
   },
   salonCard: {
     backgroundColor: '#1e1f26',

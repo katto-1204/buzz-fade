@@ -7,19 +7,45 @@ export default function TabsLayout() {
     <Tabs
       screenOptions={({ route }) => ({
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: '#FFD700', // Yellow on active
-        tabBarInactiveTintColor: '#FFFFFF', // White on inactive
+        tabBarActiveTintColor: '#FFD700',  // Active tab icon color
+        tabBarInactiveTintColor: '#FFFFFF',  // Inactive tab icon color
         tabBarLabelPosition: 'below-icon',
         tabBarItemStyle: styles.tabItem,
         tabBarLabelStyle: styles.tabLabel,
         tabBarIcon: ({ color }) => {
           switch (route.name) {
             case 'index':
-              return <MaterialCommunityIcons name="home-variant" size={24} color={color} />;
+              return (
+                <MaterialCommunityIcons
+                  name="home-variant"
+                  size={28}  // Adjusted size
+                  color={color}
+                />
+              );
             case 'services':
-              return <MaterialCommunityIcons name="content-cut" size={24} color={color} />;
+              return (
+                <MaterialCommunityIcons
+                  name="content-cut"
+                  size={28}  // Adjusted size
+                  color={color}
+                />
+              );
+            case 'bookings':
+              return (
+                <MaterialCommunityIcons
+                  name="calendar-plus"  // Updated icon
+                  size={28}  // Adjusted size
+                  color={color}
+                />
+              );
             case 'profile':
-              return <MaterialCommunityIcons name="account-circle" size={24} color={color} />;
+              return (
+                <MaterialCommunityIcons
+                  name="account-circle"
+                  size={28}  // Adjusted size
+                  color={color}
+                />
+              );
             default:
               return null;
           }
@@ -43,6 +69,14 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="bookings"
+        options={{
+          title: 'Bookings',
+          headerShown: false,
+          tabBarLabel: 'Bookings',
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',
@@ -60,19 +94,23 @@ const styles = StyleSheet.create({
     bottom: 20,
     left: 20,
     right: 20,
-    backgroundColor: '#1e1f26', // Dark background
+    backgroundColor: '#1e1f26',  // Dark background for the tab bar
     borderRadius: 30,
     height: 70,
     paddingBottom: 10,
     paddingTop: 5,
+    justifyContent: 'center',  // Center content horizontally
+    alignItems: 'center',  // Ensure items are aligned horizontally in the center
   },
   tabLabel: {
     fontSize: 12,
     fontWeight: 'bold',
-    marginTop: -2,
+    marginTop: -2,  // Adjust label position
     textAlign: 'center',
   },
   tabItem: {
     justifyContent: 'center',
+    alignItems: 'center',  // Align items in the center
+    marginHorizontal: 15,  // Reduced margin to bring icons closer
   },
 });
