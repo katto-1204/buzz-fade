@@ -1,51 +1,54 @@
 import { Tabs } from 'expo-router';
 import { StyleSheet } from 'react-native';
-import { Ionicons, Feather } from '@expo/vector-icons';  // Import both Ionicons and Feather icons
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function TabsLayout() {
   return (
     <Tabs
-      screenOptions={{
+      screenOptions={({ route }) => ({
         tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: '#000000',  // Black for active tab icon and label
-        tabBarInactiveTintColor: '#000000',  // Black for inactive tab icon and label
-        tabBarLabelPosition: 'below-icon',  // Ensures label is under the icon
+        tabBarActiveTintColor: '#FFD700', // Yellow on active
+        tabBarInactiveTintColor: '#FFFFFF', // White on inactive
+        tabBarLabelPosition: 'below-icon',
         tabBarItemStyle: styles.tabItem,
-        tabBarLabelStyle: styles.tabLabel, // Ensure label is styled properly
-      }}
+        tabBarLabelStyle: styles.tabLabel,
+        tabBarIcon: ({ color }) => {
+          switch (route.name) {
+            case 'index':
+              return <MaterialCommunityIcons name="home-variant" size={24} color={color} />;
+            case 'services':
+              return <MaterialCommunityIcons name="content-cut" size={24} color={color} />;
+            case 'profile':
+              return <MaterialCommunityIcons name="account-circle" size={24} color={color} />;
+            default:
+              return null;
+          }
+        },
+      })}
     >
-      <Tabs.Screen 
-        name="index" 
+      <Tabs.Screen
+        name="index"
         options={{
           title: 'Home',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="home" size={24} color="#000000" />  // Home icon with black color
-          ),
-          tabBarLabel: 'Home',  // Label under the icon
-        }} 
+          tabBarLabel: 'Home',
+        }}
       />
-      <Tabs.Screen 
-        name="services" 
+      <Tabs.Screen
+        name="services"
         options={{
           title: 'Services',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Feather name="scissors" size={24} color="#000000" />  // Services (cut) icon with black color
-          ),
-          tabBarLabel: 'Services',  // Label under the icon
-        }} 
+          tabBarLabel: 'Services',
+        }}
       />
-      <Tabs.Screen 
-        name="profile" 
+      <Tabs.Screen
+        name="profile"
         options={{
           title: 'Profile',
           headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <Ionicons name="person" size={24} color="#000000" />  // Profile icon with black color
-          ),
-          tabBarLabel: 'Profile',  // Label under the icon
-        }} 
+          tabBarLabel: 'Profile',
+        }}
       />
     </Tabs>
   );
@@ -53,20 +56,23 @@ export default function TabsLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: '#FFD700',  // Yellow background for the tab bar
-    height: 70,  // Adjust tab bar height for better spacing
-    paddingBottom: 5,  // Less padding at the bottom
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    right: 20,
+    backgroundColor: '#1e1f26', // Dark background
+    borderRadius: 30,
+    height: 70,
+    paddingBottom: 10,
+    paddingTop: 5,
   },
   tabLabel: {
-    color: '#000000',  // Set label text color to black
-    fontSize: 12,  // Smaller font size for labels
+    fontSize: 12,
     fontWeight: 'bold',
-    marginTop: -2,  // Move the label upwards closer to the icon
-    textAlign: 'center',  // Center align the label
+    marginTop: -2,
+    textAlign: 'center',
   },
   tabItem: {
-    marginHorizontal: 12,  // Space between tabs
-    padding: 6,  // Padding inside each tab item
-    justifyContent: 'center',  // Align items in the center vertically
+    justifyContent: 'center',
   },
 });

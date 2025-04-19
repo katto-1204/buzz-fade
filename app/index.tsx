@@ -1,27 +1,44 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import React from 'react';
+import { View, Text, Pressable, StyleSheet, ImageBackground } from 'react-native';
 import { router } from 'expo-router';
 
-export default function Welcome() {
-  return (
-    <View style={styles.container}>
-      <View style={styles.centeredContent}>
-        <Text style={styles.title}>BUZZFADE</Text>
-        <Text style={styles.subtitle}>Get the cleanest cuts in town.</Text>
-      </View>
+// Use the local image
+const backgroundImage = require('./assets/welcomebackground.png');
 
-      <View style={styles.bottomButton}>
-        <Pressable style={styles.button} onPress={() => router.push('/login')}>
-          <Text style={styles.buttonText}>Get Started</Text>
-        </Pressable>
+const Welcome = () => {
+  return (
+    <ImageBackground
+      source={backgroundImage} // Use the local image
+      style={styles.background}
+      resizeMode="cover"
+    >
+      <View style={styles.overlay}>
+        <View style={styles.centeredContent}>
+          <Text style={styles.title}>BUZZFADE</Text>
+          <Text style={styles.subtitle}>Get the cleanest cuts in town.</Text>
+        </View>
+
+        <View style={styles.bottomButton}>
+          <Pressable style={styles.button} onPress={() => router.push('/login')}>
+            <Text style={styles.buttonText}>Book Now</Text>
+          </Pressable>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
-}
+};
+
+export default Welcome;
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
-    backgroundColor: '#0d0e12',
+    width: '100%',
+    height: '100%',
+  },
+  overlay: {
+    flex: 1,
+    backgroundColor: 'rgba(13, 14, 18, 0.6)', // semi-transparent dark overlay
     padding: 20,
     justifyContent: 'space-between',
   },
@@ -31,7 +48,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   title: {
-    fontSize: 32,
+    fontSize: 40,
     fontWeight: 'bold',
     color: '#ffffff',
     marginBottom: 10,
@@ -44,13 +61,13 @@ const styles = StyleSheet.create({
   },
   bottomButton: {
     alignItems: 'center',
-    marginBottom: 40,
+    marginBottom: 90, // Adjusted to move the button up
   },
   button: {
     backgroundColor: '#FFD700',
     paddingVertical: 14,
     paddingHorizontal: 32,
-    borderRadius: 999, // Fully rounded
+    borderRadius: 999,
   },
   buttonText: {
     color: '#0d0e12',
