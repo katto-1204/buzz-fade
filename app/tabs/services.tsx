@@ -87,36 +87,58 @@ const highRatedBarbers = [
 export default function Services() {
   const router = useRouter();
 
-  const renderShopItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.salonCard}
-      onPress={() => router.push(`/Barbershops/${item.name.toLowerCase().replace(/\s+/g, '')}barbershop`)}
-    >
-      {item.image ? (
-        <Image source={item.image} style={styles.salonImage} />
-      ) : (
-        <View style={styles.imagePlaceholder}>
-          <Ionicons name="cut" size={40} color="#FFD700" />
-        </View>
-      )}
-      <View style={styles.salonInfo}>
-        <Text style={styles.salonName}>{item.name}</Text>
-        <Text style={styles.salonAddress}>{item.address}</Text>
-        <View style={styles.salonFooter}>
-          <View style={styles.ratingContainer}>
-            <Ionicons name="star" size={16} color="#FFD700" />
-            <Text style={styles.ratingText}>{item.rating}</Text>
+  const renderShopItem = ({ item }) => {
+    // Create a consistent shop ID for navigation
+    const getShopPath = (name) => {
+      switch(name) {
+        case 'AllDayFade':
+          return 'alldayfadebarbershop';
+        case 'Barracks Barbershop':
+          return 'barracksbarbershop';
+        case 'Atletiko Barbershop':
+          return 'atletikobarbershop';
+        case 'Macho Mucho':
+          return 'machomucho';
+        case 'Boss Barbershop':
+          return 'bossbarbershop';
+        case 'Kingsman Barbershop':
+          return 'kingsmanbarbershop';
+        default:
+          return name.toLowerCase().replace(/\s+/g, '');
+      }
+    };
+
+    return (
+      <TouchableOpacity 
+        style={styles.salonCard}
+        onPress={() => router.push(`/Barbershops/${getShopPath(item.name)}`)}
+      >
+        {item.image ? (
+          <Image source={item.image} style={styles.salonImage} />
+        ) : (
+          <View style={styles.imagePlaceholder}>
+            <Ionicons name="cut" size={40} color="#FFD700" />
           </View>
-          <TouchableOpacity 
-            style={styles.bookButton}
-            onPress={() => router.push(`/Barbershops/${item.name.toLowerCase().replace(/\s+/g, '')}barbershop`)}
-          >
-            <Text style={styles.bookButtonText}>Book Now</Text>
-          </TouchableOpacity>
+        )}
+        <View style={styles.salonInfo}>
+          <Text style={styles.salonName}>{item.name}</Text>
+          <Text style={styles.salonAddress}>{item.address}</Text>
+          <View style={styles.salonFooter}>
+            <View style={styles.ratingContainer}>
+              <Ionicons name="star" size={16} color="#FFD700" />
+              <Text style={styles.ratingText}>{item.rating}</Text>
+            </View>
+            <TouchableOpacity 
+              style={styles.bookButton}
+              onPress={() => router.push(`/Barbershops/${getShopPath(item.name)}`)}
+            >
+              <Text style={styles.bookButtonText}>Book Now</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   const renderBarberItem = ({ item }) => (
     <TouchableOpacity 
