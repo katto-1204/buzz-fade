@@ -9,21 +9,24 @@ import {
   TouchableOpacity,
   FlatList,
   ImageBackground,
+  SafeAreaView,
 } from 'react-native';
-import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons'; // Import icons
+import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
+// Constants
 const userName = 'Alex';
-
 const featuredBarberImage = require('../assets/barbernialana.png');
+const welcomeBackground = require('../assets/welcomebackground.png');
 
+// Data arrays
 const services = [
   { name: 'Haircut', icon: 'scissors-cutting' },
   { name: 'Trim', icon: 'content-cut' },
   { name: 'Shaving', icon: 'razor-double-edge' },
   { name: 'Styling', icon: 'hair-dryer' },
   { name: 'Coloring', icon: 'palette' },
-  { name: 'Massage', icon: 'hand-heart' }, // New service added
+  { name: 'Massage', icon: 'hand-heart' },
 ];
 
 const trendingHaircuts = [
@@ -57,110 +60,134 @@ const topSalons = [
   },
 ];
 
-
 export default function Home() {
   const router = useRouter();
 
-  // Function to navigate to the Services tab when "View All" is pressed
   const navigateToServices = () => {
-    router.push('/tabs/services'); // This will navigate to the Services tab
+    router.push('/tabs/services');
   };
 
   return (
-    <ScrollView style={styles.container}>
-      {/* HEADER */}
-      <View style={styles.header}>
-        <Text style={styles.greeting}>Good Morning, {userName}</Text>
-        <View style={styles.icons}>
-          <Ionicons name="heart-outline" size={24} color="#fff" style={styles.icon} />
-          <Ionicons name="notifications-outline" size={24} color="#fff" />
-        </View>
-      </View>
-
-      {/* SEARCH BAR */}
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search services or salons"
-          placeholderTextColor="#aaa"
-          style={styles.searchInput}
-        />
-        <Feather name="filter" size={24} color="#fff" />
-      </View>
-
-      {/* FEATURED BARBER SECTION */}
-      <Text style={styles.sectionTitle}>Featured Barber</Text>
-      <ImageBackground
-        source={require('../assets/welcomebackground.png')} // Corrected path
-        style={styles.background}
-        resizeMode="cover"
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView 
+        style={styles.container}
+        contentContainerStyle={styles.scrollContent}
       >
-        <Image source={featuredBarberImage} style={styles.featuredBarber}
+        {/* HEADER */}
+        <View style={styles.header}>
+          <Text style={styles.greeting}>Good Morning, {userName}</Text>
+          <View style={styles.icons}>
+            <Ionicons name="heart-outline" size={24} color="#fff" style={styles.icon} />
+            <Ionicons name="notifications-outline" size={24} color="#fff" />
+          </View>
+        </View>
+
+        {/* SEARCH BAR */}
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="Search services or salons"
+            placeholderTextColor="#aaa"
+            style={styles.searchInput}
+          />
+          <Feather name="filter" size={24} color="#fff" />
+        </View>
+
+        {/* FEATURED BARBER SECTION */}
+        <Text style={styles.sectionTitle}>Featured Barber</Text>
+        <ImageBackground
+          source={welcomeBackground}
+          style={styles.background}
           resizeMode="cover"
-        />
-      </ImageBackground>
+        >
+          <Image source={featuredBarberImage} style={styles.featuredBarber} resizeMode="cover" />
+        </ImageBackground>
 
-      {/* TRENDING HAIRCUTS SECTION */}
-      <Text style={styles.sectionTitle}>Trending</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.trendingRow}>
-        {trendingHaircuts.map((cut, index) => (
-          <View key={index} style={styles.trendingBox}>
-            <Image source={cut.image} style={styles.trendingImage} />
-            <Text style={styles.trendingText}>{cut.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* SERVICES SECTION */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Services</Text>
-        <TouchableOpacity onPress={navigateToServices}>
-          <Text style={styles.viewAll}>View All</Text>
-        </TouchableOpacity>
-      </View>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.servicesRow}>
-        {services.map((service, index) => (
-          <View key={index} style={styles.serviceBox}>
-            <MaterialCommunityIcons name={service.icon} size={40} color="#FFD700" style={styles.serviceIcon} />
-            <Text style={styles.serviceText}>{service.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* TOP RATED SALONS */}
-      <View style={styles.sectionHeader}>
-        <Text style={styles.sectionTitle}>Top Rated Shops</Text>
-        <TouchableOpacity onPress={navigateToServices}>
-          <Text style={styles.viewAll}>View All</Text>
-        </TouchableOpacity>
-      </View>
-      <FlatList
-        horizontal
-        data={topSalons}
-        keyExtractor={(item) => item.id}
-        showsHorizontalScrollIndicator={false}
-        renderItem={({ item }) => (
-          <View style={styles.salonCard}>
-            <Image source={item.image} style={styles.salonImage} />
-            <View style={styles.salonInfo}>
-              <Text style={styles.salonName}>{item.name}</Text>
-              <Text style={styles.salonAddress}>{item.address}</Text>
-              <Text style={styles.salonPrice}>Avg. Price: {item.price}</Text>
+        {/* TRENDING HAIRCUTS SECTION */}
+        <Text style={styles.sectionTitle}>Trending</Text>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.trendingRow}
+          contentContainerStyle={styles.trendingContent}
+        >
+          {trendingHaircuts.map((cut, index) => (
+            <View key={`trending-${index}`} style={styles.trendingBox}>
+              <Image source={cut.image} style={styles.trendingImage} />
+              <Text style={styles.trendingText}>{cut.name}</Text>
             </View>
-          </View>
-        )}
-      />
+          ))}
+        </ScrollView>
 
-      {/* BLANK SECTION */}
-      <View style={styles.blankSection} />
-    </ScrollView>
+        {/* SERVICES SECTION */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Services</Text>
+          <TouchableOpacity onPress={navigateToServices}>
+            <Text style={styles.viewAll}>View All</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView 
+          horizontal 
+          showsHorizontalScrollIndicator={false} 
+          style={styles.servicesRow}
+          contentContainerStyle={styles.servicesContent}
+        >
+          {services.map((service, index) => (
+            <View key={`service-${index}`} style={styles.serviceBox}>
+              <MaterialCommunityIcons 
+                name={service.icon} 
+                size={40} 
+                color="#FFD700" 
+                style={styles.serviceIcon} 
+              />
+              <Text style={styles.serviceText}>{service.name}</Text>
+            </View>
+          ))}
+        </ScrollView>
+
+        {/* TOP RATED SALONS */}
+        <View style={styles.sectionHeader}>
+          <Text style={styles.sectionTitle}>Top Rated Shops</Text>
+          <TouchableOpacity onPress={navigateToServices}>
+            <Text style={styles.viewAll}>View All</Text>
+          </TouchableOpacity>
+        </View>
+        <FlatList
+          horizontal
+          data={topSalons}
+          keyExtractor={(item) => item.id}
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={styles.salonsContent}
+          renderItem={({ item }) => (
+            <View style={styles.salonCard}>
+              <Image source={item.image} style={styles.salonImage} />
+              <View style={styles.salonInfo}>
+                <Text style={styles.salonName}>{item.name}</Text>
+                <Text style={styles.salonAddress}>{item.address}</Text>
+                <Text style={styles.salonPrice}>Avg. Price: {item.price}</Text>
+              </View>
+            </View>
+          )}
+        />
+
+        {/* BOTTOM SPACER */}
+        <View style={styles.bottomSpacer} />
+      </ScrollView>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: '#0d0e12',
+  },
   container: {
     flex: 1,
     backgroundColor: '#0d0e12',
+  },
+  scrollContent: {
     padding: 16,
+    paddingBottom: 100,
   },
   header: {
     flexDirection: 'row',
@@ -197,7 +224,6 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 180,
     borderRadius: 16,
-    marginBottom: 20,
   },
   background: {
     width: '100%',
@@ -215,21 +241,21 @@ const styles = StyleSheet.create({
   trendingRow: {
     marginBottom: 24,
   },
+  trendingContent: {
+    paddingHorizontal: 8,
+  },
   trendingBox: {
     alignItems: 'center',
     marginRight: 16,
   },
   trendingImage: {
-    padding: 10,
-    paddingLeft:10,
     width: 80,
     height: 80,
     borderRadius: 40,
     marginBottom: 6,
     borderWidth: 2,
-    borderColor: 'yellow',
+    borderColor: '#FFD700',
   },
-  
   trendingText: {
     color: '#fff',
     fontSize: 12,
@@ -248,9 +274,13 @@ const styles = StyleSheet.create({
   servicesRow: {
     marginBottom: 24,
   },
+  servicesContent: {
+    paddingHorizontal: 8,
+  },
   serviceBox: {
     alignItems: 'center',
     marginRight: 16,
+    width: 80,
   },
   serviceIcon: {
     marginBottom: 8,
@@ -260,6 +290,9 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
     textAlign: 'center',
+  },
+  salonsContent: {
+    paddingHorizontal: 8,
   },
   salonCard: {
     backgroundColor: '#1e1f26',
@@ -290,7 +323,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: '500',
   },
-  blankSection: {
-    height: 100, // Adjust the height as needed
+  bottomSpacer: {
+    height: 100,
   },
 });
