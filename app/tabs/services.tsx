@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import BarberBookingModal from '../components/BarberBookingModal'; // Update the import path to point to the components folder
 
 // Get screen dimensions for responsive spacing
 const { height } = Dimensions.get('window');
@@ -86,6 +87,15 @@ const highRatedBarbers = [
 
 export default function Services() {
   const router = useRouter();
+  const [selectedBarber, setSelectedBarber] = useState(null);
+  const [isBarberBookingVisible, setIsBarberBookingVisible] = useState(false);
+
+  const services = [
+    { name: 'Haircut', price: '₱150' },
+    { name: 'Haircut + Beard Trim', price: '₱200' },
+    { name: 'Hair Color', price: '₱500' },
+    { name: 'Kids Haircut', price: '₱120' },
+  ];
 
   const renderShopItem = ({ item }) => {
     // Create a consistent shop ID for navigation
@@ -141,9 +151,7 @@ export default function Services() {
   };
 
   const renderBarberItem = ({ item }) => (
-    <TouchableOpacity 
-      style={styles.barberCard}
-    >
+    <TouchableOpacity style={styles.barberCard}>
       <Image source={item.image} style={styles.barberImage} />
       <View style={styles.barberInfo}>
         <Text style={styles.barberName}>{item.name}</Text>
@@ -155,7 +163,10 @@ export default function Services() {
           </View>
           <TouchableOpacity 
             style={styles.bookBarberButton}
-            onPress={() => router.push(`/Barbers/${item.id.split('b')[1]}`)}
+            onPress={() => {
+              setSelectedBarber(item);
+              setIsBarberBookingVisible(true);
+            }}
           >
             <Text style={styles.bookButtonText}>Book Barber</Text>
           </TouchableOpacity>
@@ -188,6 +199,12 @@ export default function Services() {
         contentContainerStyle={styles.listContainer}
         columnWrapperStyle={styles.columnWrapper}
         showsVerticalScrollIndicator={false}
+      />
+      <BarberBookingModal 
+        visible={isBarberBookingVisible}
+        onClose={() => setIsBarberBookingVisible(false)}
+        barber={selectedBarber}
+        services={services}
       />
     </SafeAreaView>
   );

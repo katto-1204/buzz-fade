@@ -1,104 +1,77 @@
-import React, { useState } from 'react';
-import { View, Text, Pressable, StyleSheet, Modal, TextInput } from 'react-native';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
+import { useBookings } from '../context/BookingsContext';
 
 export default function Bookings() {
-  const [bookingConfirmed, setBookingConfirmed] = useState(false); // Default to false for editing
-  const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false); // Show/hide the date picker
-  const [showModal, setShowModal] = useState(false);
-  const [cancelReason, setCancelReason] = useState('');
+  const { bookings } = useBookings();
 
-  const handleDateChange = (event: DateTimePickerEvent, selected?: Date) => {
-    if (selected) {
-      setSelectedDate(selected);
-    }
-    setShowDatePicker(false); // Hide the date picker after selection
-  };
-
-  const confirmBooking = () => {
-    setBookingConfirmed(true); // Confirm the booking
-  };
-
-  const cancelBooking = () => {
-    setShowModal(true); // Show the cancellation modal
-  };
-
-  const handleConfirmCancel = () => {
-    setBookingConfirmed(false); // Reset to allow editing
-    setCancelReason('');
-    setShowModal(false);
-  };
+  if (bookings.length === 0) {
+    return (
+      <View style={styles.emptyContainer}>
+        <Ionicons name="calendar-outline" size={64} color="#FFD700" />
+        <Text style={styles.emptyText}>No bookings yet</Text>
+        <Text style={styles.emptySubtext}>
+          Your confirmed appointments will appear here
+        </Text>
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.header}>Bookings</Text>
+    <ScrollView style={styles.container}>
+      {bookings.map((booking) => (
+        <View key={booking.id} style={styles.card}>
+          <View style={styles.cardHeader}>
+            <Text style={styles.salonName}>{booking.salon}</Text>
+            <View style={styles.statusBadge}>
+              <Text style={styles.statusText}>{booking.status}</Text>
+            </View>
+          </View>
 
-      <Text style={styles.label}>Selected Salon:</Text>
-      <Text style={styles.text}>AllDayFade</Text>
+          <View style={styles.cardRow}>
+            <Ionicons name="person" size={24} color="#FFD700" />
+            <View style={styles.cardContent}>
+              <Text style={styles.label}>Barber</Text>
+              <Text style={styles.text}>{booking.barber}</Text>
+            </View>
+          </View>
 
-      <Text style={styles.label}>Chosen Barber:</Text>
-      <Text style={styles.text}>Jay Fadez</Text>
+          <View style={styles.cardRow}>
+            <Ionicons name="cut" size={24} color="#FFD700" />
+            <View style={styles.cardContent}>
+              <Text style={styles.label}>Service</Text>
+              <Text style={styles.text}>{booking.service}</Text>
+            </View>
+          </View>
 
-      <Text style={styles.label}>Service:</Text>
-      <Text style={styles.text}>Haircut</Text>
+          <View style={styles.cardRow}>
+            <Ionicons name="calendar" size={24} color="#FFD700" />
+            <View style={styles.cardContent}>
+              <Text style={styles.label}>Schedule</Text>
+              <Text style={styles.text}>
+                {booking.date.toLocaleString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </Text>
+            </View>
+          </View>
 
-      <Text style={styles.label}>Schedule:</Text>
-      <Pressable onPress={() => setShowDatePicker(true)} style={styles.datePickerButton}>
-        <Text style={styles.datePickerText}>
-          {selectedDate.toLocaleString('en-US', {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-          })}
-        </Text>
-      </Pressable>
-
-      {showDatePicker && (
-        <DateTimePicker
-          value={selectedDate}
-          mode="datetime"
-          display="default"
-          onChange={handleDateChange}
-          textColor="#fff" // Ensures text matches the dark theme
-        />
-      )}
-
-      <Pressable
-        style={[styles.button, bookingConfirmed ? styles.cancelButton : styles.confirmButton]}
-        onPress={bookingConfirmed ? cancelBooking : confirmBooking}
-      >
-        <Text style={styles.buttonText}>
-          {bookingConfirmed ? 'Cancel Booking' : 'Confirm Booking'}
-        </Text>
-      </Pressable>
-
-      <Modal visible={showModal} transparent animationType="slide">
-        <View style={styles.modalBackground}>
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Are you sure to cancel?</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="State your reason"
-              placeholderTextColor="#aaa"
-              value={cancelReason}
-              onChangeText={setCancelReason}
-            />
-            <View style={styles.modalButtons}>
-              <Pressable onPress={handleConfirmCancel} style={styles.modalConfirm}>
-                <Text style={styles.modalText}>Yes</Text>
-              </Pressable>
-              <Pressable onPress={() => setShowModal(false)} style={styles.modalCancel}>
-                <Text style={styles.modalText}>No</Text>
-              </Pressable>
+          <View style={styles.cardRow}>
+            <Ionicons name="cash" size={24} color="#FFD700" />
+            <View style={styles.cardContent}>
+              <Text style={styles.label}>Price</Text>
+              <Text style={styles.text}>{booking.price}</Text>
             </View>
           </View>
         </View>
-      </Modal>
-    </View>
+      ))}
+    </ScrollView>
   );
 }
 
@@ -106,34 +79,58 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#0d0e12', // Dark background
+    backgroundColor: '#0d0e12',
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  headerText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#fff', // White text
+    color: '#fff',
+  },
+  statusBadge: {
+    backgroundColor: '#4CAF50',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+  },
+  statusText: {
+    color: '#fff',
+    fontWeight: 'bold',
+  },
+  card: {
+    backgroundColor: '#1e1f26',
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 20,
+  },
+  cardRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#333',
+  },
+  cardContent: {
+    marginLeft: 16,
+    flex: 1,
   },
   label: {
     fontSize: 16,
     fontWeight: '600',
-    color: '#FFD700', // Gold color for labels
-    marginTop: 15,
+    color: '#FFD700',
   },
   text: {
     fontSize: 16,
-    color: '#fff', // White text
+    color: '#fff',
   },
-  datePickerButton: {
-    marginTop: 10,
-    padding: 10,
-    backgroundColor: '#1e1f26',
-    borderRadius: 8,
-    alignItems: 'center',
-  },
-  datePickerText: {
-    color: '#FFD700', // Gold text for the selected date
-    fontSize: 16,
+  editableText: {
+    color: '#FFD700',
+    textDecorationLine: 'underline',
   },
   button: {
     marginTop: 30,
@@ -142,23 +139,32 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   confirmButton: {
-    backgroundColor: '#4CAF50', // Green for confirm
+    backgroundColor: '#4CAF50',
   },
   cancelButton: {
-    backgroundColor: '#FF3B30', // Red for cancel
+    backgroundColor: '#FF3B30',
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,
   },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    gap: 12,
+  },
+  rescheduleButton: {
+    backgroundColor: '#2196F3',
+    flex: 1,
+  },
   modalBackground: {
     flex: 1,
     justifyContent: 'center',
-    backgroundColor: 'rgba(0,0,0,0.5)', // Semi-transparent background
+    backgroundColor: 'rgba(0,0,0,0.5)',
   },
   modalContent: {
-    backgroundColor: '#1e1f26', // Dark modal background
+    backgroundColor: '#1e1f26',
     margin: 20,
     padding: 20,
     borderRadius: 10,
@@ -166,17 +172,17 @@ const styles = StyleSheet.create({
   modalTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#fff', // White text
+    color: '#fff',
     marginBottom: 10,
   },
   input: {
     borderWidth: 1,
-    borderColor: '#FFD700', // Gold border
+    borderColor: '#FFD700',
     borderRadius: 5,
     padding: 10,
     marginTop: 10,
     marginBottom: 20,
-    color: '#fff', // White text
+    color: '#fff',
   },
   modalButtons: {
     flexDirection: 'row',
@@ -200,5 +206,35 @@ const styles = StyleSheet.create({
   modalText: {
     color: '#fff',
     fontWeight: 'bold',
+  },
+  emptyContainer: {
+    flex: 1,
+    backgroundColor: '#0d0e12',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
+  },
+  emptyText: {
+    color: '#fff',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginTop: 20,
+  },
+  emptySubtext: {
+    color: '#aaa',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 8,
+  },
+  salonName: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+  cardHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 16,
   },
 });

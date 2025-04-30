@@ -1,17 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Image, StyleSheet, ScrollView, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { shopData } from '../data/shopAndBarberData';
+import BookingModal from '../components/BookingModal';
 
 const { width } = Dimensions.get('window');
 
 export default function BarbershopProfile() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
+  const [isBookingVisible, setIsBookingVisible] = useState(false);
 
   const shop = shopData[id as string];
+
+  const handleBooking = (details) => {
+    console.log('Booking details:', details);
+    // Add your booking logic here
+  };
 
   if (!shop) {
     return (
@@ -66,11 +73,20 @@ export default function BarbershopProfile() {
             ))}
           </View>
           {/* Book Button */}
-          <TouchableOpacity style={styles.bookButton}>
+          <TouchableOpacity
+            style={styles.bookButton}
+            onPress={() => setIsBookingVisible(true)}
+          >
             <Text style={styles.bookButtonText}>Book Appointment</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+      <BookingModal
+        visible={isBookingVisible}
+        onClose={() => setIsBookingVisible(false)}
+        shop={shop}
+        onBook={handleBooking}
+      />
     </SafeAreaView>
   );
 }
