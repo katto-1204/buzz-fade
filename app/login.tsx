@@ -1,15 +1,25 @@
 import { useState } from 'react';
-import { View, TextInput, Text, Pressable, StyleSheet } from 'react-native';
+import { View, TextInput, Text, Pressable, StyleSheet, Alert } from 'react-native';
 import { router } from 'expo-router';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from './firebaseConfig';
 import { FontAwesome, AntDesign, Ionicons } from '@expo/vector-icons';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const handleLogin = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      router.replace('/tabs'); // Redirect to home after successful login
+    } catch (error) {
+      Alert.alert('Login Failed', error.message);
+    }
+  };
+
   return (
     <View style={styles.container}>
-      {/* Sign In Title */}
       <Text style={styles.title}>Sign In</Text>
 
       <TextInput
@@ -29,11 +39,10 @@ export default function Login() {
         secureTextEntry
       />
 
-      <Pressable style={styles.button} onPress={() => router.replace('/tabs')}>
+      <Pressable style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Login</Text>
       </Pressable>
 
-      {/* Social Login Buttons Row */}
       <View style={styles.socialRow}>
         <Pressable style={[styles.socialButton, styles.facebook]} onPress={() => {}}>
           <FontAwesome name="facebook" size={22} color="#fff" />
@@ -48,7 +57,6 @@ export default function Login() {
         </Pressable>
       </View>
 
-      {/* Create Account Link */}
       <View style={styles.registerWrapper}>
         <Text style={styles.registerText}>New here? </Text>
         <Pressable onPress={() => router.push('/register')}>
