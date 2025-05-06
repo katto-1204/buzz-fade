@@ -1,10 +1,25 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Pressable } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, Pressable, Modal } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useBookings } from '../context/BookingsContext';
 
 export default function Bookings() {
-  const { bookings } = useBookings();
+  const { bookings, cancelBooking } = useBookings(); // Assuming `cancelBooking` is provided by the context
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const handleCancelPress = (booking) => {
+    setSelectedBooking(booking);
+    setModalVisible(true);
+  };
+
+  const confirmCancellation = () => {
+    if (selectedBooking) {
+      cancelBooking(selectedBooking.id); // Call the cancellation function
+    }
+    setModalVisible(false);
+    setSelectedBooking(null);
+  };
 
   if (bookings.length === 0) {
     return (
@@ -69,8 +84,47 @@ export default function Bookings() {
               <Text style={styles.text}>{booking.price}</Text>
             </View>
           </View>
+
+          <Pressable
+            style={[styles.button, styles.cancelButton]}
+            onPress={() => handleCancelPress(booking)}
+          >
+            <Text style={styles.buttonText}>Cancel Booking</Text>
+          </Pressable>
         </View>
       ))}
+
+      {/* Cancel Booking Modal */}
+      <Modal
+        visible={isModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalBackground}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Cancel Booking</Text>
+            <Text style={styles.text}>
+              Are you sure you want to cancel your booking at{' '}
+              <Text style={styles.editableText}>{selectedBooking?.salon}</Text>?
+            </Text>
+            <View style={styles.modalButtons}>
+              <Pressable
+                style={styles.modalConfirm}
+                onPress={confirmCancellation}
+              >
+                <Text style={styles.modalText}>Yes, Cancel</Text>
+              </Pressable>
+              <Pressable
+                style={styles.modalCancel}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.modalText}>No, Go Back</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 }
