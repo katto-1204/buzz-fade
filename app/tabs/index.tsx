@@ -15,7 +15,7 @@ import { Ionicons, Feather, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 
 // Constants
-const userName = 'Alex';
+const userName = 'Alana';
 const featuredBarberImage = require('../assets/barbernialana.png');
 const welcomeBackground = require('../assets/welcomebackground.png');
 
@@ -77,8 +77,13 @@ export default function Home() {
         <View style={styles.header}>
           <Text style={styles.greeting}>Good Morning, {userName}</Text>
           <View style={styles.icons}>
-            <Ionicons name="heart-outline" size={24} color="#fff" style={styles.icon} />
-            <Ionicons name="notifications-outline" size={24} color="#fff" />
+            <Ionicons
+  name="heart-outline"
+  size={24}
+  color="#fff"
+  style={styles.icon}
+  onPress={() => router.push('../favorites')}
+/>
           </View>
         </View>
 

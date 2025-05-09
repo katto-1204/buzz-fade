@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, TextInput } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -7,48 +7,54 @@ import { useRouter } from 'expo-router';
 export default function Profile() {
   const router = useRouter();
 
+  // State for editable fields
+  const [name, setName] = useState('Alana Gundaya');
+  const [email, setEmail] = useState('Alana.Gundaya@gmail.com');
+  const [isEditing, setIsEditing] = useState(false);
+
   const menuItems = [
     {
       title: 'My Appointments',
       icon: 'calendar',
       count: '2 Upcoming',
-      route: '/profile/appointments' // Updated route
+      route: '/profile/appointments',
     },
     {
       title: 'Booking History',
       icon: 'time',
       count: '12 Past Bookings',
-      route: '/profile/history' // Updated route
+      route: '/profile/history',
     },
     {
       title: 'Favorite Barbers',
       icon: 'heart',
       count: '3 Favorites',
-      route: '/favorites'
+      route: '/favorites',
     },
     {
       title: 'Payment Methods',
       icon: 'card',
       count: '2 Cards Saved',
-      route: '/payments'
+      route: '/payments',
     },
     {
       title: 'Notifications',
       icon: 'notifications',
       count: '4 New',
-      route: '/notifications'
+      route: '/notifications',
     },
     {
       title: 'Settings',
       icon: 'settings',
-      route: '/settings'
+      route: '/settings',
     },
-    {
-      title: 'Help & Support',
-      icon: 'help-circle',
-      route: '/support'
-    }
   ];
+
+  const handleSave = () => {
+    setIsEditing(false);
+    // Here you can add logic to persist the changes, e.g., API call
+    console.log('Saved:', { name, email });
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -56,25 +62,53 @@ export default function Profile() {
         {/* Profile Header */}
         <View style={styles.header}>
           <View style={styles.profileImageContainer}>
-            <Image 
+            <Image
               source={require('../assets/default-avatar.png')}
               style={styles.profileImage}
             />
-            <TouchableOpacity 
+            <TouchableOpacity
               style={styles.editButton}
               onPress={() => router.push('/profile/edit')}
             >
               <Ionicons name="camera" size={20} color="#FFD700" />
             </TouchableOpacity>
           </View>
-          <Text style={styles.name}>John Doe</Text>
-          <Text style={styles.email}>john.doe@example.com</Text>
-          <TouchableOpacity 
-            style={styles.editProfileButton}
-            onPress={() => router.push('/profile/edit')}
-          >
-            <Text style={styles.editProfileText}>Edit Profile</Text>
-          </TouchableOpacity>
+          {isEditing ? (
+            <>
+              <TextInput
+                style={styles.input}
+                value={name}
+                onChangeText={setName}
+                placeholder="Enter your name"
+                placeholderTextColor="#666"
+              />
+              <TextInput
+                style={styles.input}
+                value={email}
+                onChangeText={setEmail}
+                placeholder="Enter your email"
+                placeholderTextColor="#666"
+                keyboardType="email-address"
+              />
+              <TouchableOpacity
+                style={styles.saveButton}
+                onPress={handleSave}
+              >
+                <Text style={styles.saveButtonText}>Save</Text>
+              </TouchableOpacity>
+            </>
+          ) : (
+            <>
+              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.email}>{email}</Text>
+              <TouchableOpacity
+                style={styles.editProfileButton}
+                onPress={() => setIsEditing(true)}
+              >
+                <Text style={styles.editProfileText}>Edit Profile</Text>
+              </TouchableOpacity>
+            </>
+          )}
         </View>
 
         {/* Stats Section */}
@@ -98,8 +132,8 @@ export default function Profile() {
         {/* Menu Items */}
         <View style={styles.menuContainer}>
           {menuItems.map((item, index) => (
-            <TouchableOpacity 
-              key={index} 
+            <TouchableOpacity
+              key={index}
               style={styles.menuItem}
               onPress={() => router.push(item.route)}
             >
@@ -118,7 +152,10 @@ export default function Profile() {
         </View>
 
         {/* Logout Button */}
-        <TouchableOpacity style={styles.logoutButton}>
+        <TouchableOpacity
+          style={[styles.logoutButton, { marginTop: 20 }]}
+          onPress={() => router.push('/login')} // Navigate to login page
+        >
           <Ionicons name="log-out" size={24} color="#FF4444" />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
@@ -254,6 +291,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     marginLeft: 8,
+  },
+  input: {
+    backgroundColor: '#1e1f26',
+    color: '#fff',
+    fontSize: 16,
+    padding: 10,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#FFD700',
+    marginBottom: 10,
+    width: '80%',
+    textAlign: 'center',
+  },
+  saveButton: {
+    backgroundColor: '#FFD700',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 20,
+  },
+  saveButtonText: {
+    color: '#0d0e12',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
 });
 
